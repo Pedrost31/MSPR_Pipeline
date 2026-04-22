@@ -1,0 +1,67 @@
+2026-04-21 23:05:18,445 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:05:18,457 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:05:18,483 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=0 merged=940
+2026-04-21 23:05:18,520 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:05:18,520 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:05:47,786 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:05:47,801 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:05:47,825 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:05:47,860 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:05:47,861 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:07:14,354 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:07:14,369 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:07:14,403 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:07:14,454 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:07:14,454 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:11:18,287 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:11:18,300 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:11:18,594 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:11:18,628 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:11:18,628 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:28:02,378 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:28:02,424 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:28:02,742 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:28:02,787 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:28:02,787 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:30:13,977 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:30:13,991 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:30:14,038 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:30:14,090 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:30:14,090 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:38:04,299 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:38:04,313 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:38:04,354 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:38:04,406 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:38:04,406 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:44:40,391 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:44:40,403 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:44:40,446 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:44:40,498 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:44:40,498 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:44:55,501 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:44:55,516 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:44:55,567 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 gym_progress=200 merged=940
+2026-04-21 23:44:55,631 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:44:55,631 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:55:52,966 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:55:52,979 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:55:53,012 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 merged=940
+2026-04-21 23:55:53,071 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:55:53,071 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-21 23:57:38,190 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-21 23:57:38,206 | INFO | etl.extract | Extraction reussie
+2026-04-21 23:57:38,241 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 merged=940
+2026-04-21 23:57:38,275 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-21 23:57:38,275 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-22 00:00:42,192 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-22 00:00:42,204 | INFO | etl.extract | Extraction reussie
+2026-04-22 00:00:42,238 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 merged=940
+2026-04-22 00:00:42,271 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-22 00:00:42,381 | INFO | etl.quality | CSV quality check done | files=5 columns=82 flagged=3 report=logs\csv_quality_report.csv
+2026-04-22 00:00:42,382 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-22 00:05:04,007 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-22 00:05:04,019 | INFO | etl.extract | Extraction reussie
+2026-04-22 00:05:04,070 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 merged=940
+2026-04-22 00:05:04,108 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-22 00:05:04,250 | INFO | etl.quality | CSV quality check done | files=5 columns=82 flagged=3 report=logs\csv_quality_report.csv
+2026-04-22 00:05:04,251 | INFO | etl.pipeline | Pipeline ETL termine avec succes

@@ -1,0 +1,83 @@
+file,column,dtype,rows,missing_count,missing_pct,unique_values,is_constant,zero_pct,high_zero_flag,duplicate_rows_file_level
+activity_clean.csv,UserID,int64,940,0,0.0,33,False,0.0,False,0
+activity_clean.csv,Date,object,940,0,0.0,31,False,,False,0
+activity_clean.csv,Total_Distance,float64,940,0,0.0,615,False,8.3,False,0
+activity_clean.csv,Tracker_Distance,float64,940,0,0.0,613,False,8.3,False,0
+activity_clean.csv,Logged_Activities_Distance,float64,940,0,0.0,18,False,96.6,True,0
+activity_clean.csv,Very_Active_Distance,float64,940,0,0.0,333,False,43.94,False,0
+activity_clean.csv,Moderately_Active_Distance,float64,940,0,0.0,211,False,41.06,False,0
+activity_clean.csv,Light_Active_Distance,float64,940,0,0.0,491,False,9.04,False,0
+activity_clean.csv,Sedentary_Active_Distance,float64,940,0,0.0,9,False,91.28,True,0
+activity_clean.csv,Very_Active_Minutes,int64,940,0,0.0,122,False,43.51,False,0
+activity_clean.csv,Fairly_Active_Minutes,int64,940,0,0.0,81,False,40.85,False,0
+activity_clean.csv,Lightly_Active_Minutes,int64,940,0,0.0,335,False,8.94,False,0
+activity_clean.csv,Sedentary_Minutes,int64,940,0,0.0,549,False,0.11,False,0
+activity_clean.csv,Steps,int64,940,0,0.0,842,False,8.19,False,0
+activity_clean.csv,Calories_Burned,int64,940,0,0.0,734,False,0.43,False,0
+merged_analytics_mspr_20.csv,UserID,int64,940,0,0.0,33,False,0.0,False,0
+merged_analytics_mspr_20.csv,Date,object,940,0,0.0,31,False,,False,0
+merged_analytics_mspr_20.csv,Workout_Type,object,940,0,0.0,4,False,,False,0
+merged_analytics_mspr_20.csv,Experience_Level,int64,940,0,0.0,3,False,0.0,False,0
+merged_analytics_mspr_20.csv,Age,int64,940,0,0.0,24,False,0.0,False,0
+merged_analytics_mspr_20.csv,Gender,object,940,0,0.0,2,False,,False,0
+merged_analytics_mspr_20.csv,BMI_calculated,float64,940,0,0.0,33,False,0.0,False,0
+merged_analytics_mspr_20.csv,Weight (kg),float64,940,0,0.0,33,False,0.0,False,0
+merged_analytics_mspr_20.csv,Height (m),float64,940,0,0.0,21,False,0.0,False,0
+merged_analytics_mspr_20.csv,Steps,int64,940,0,0.0,842,False,8.19,False,0
+merged_analytics_mspr_20.csv,Total_Distance,float64,940,0,0.0,615,False,8.3,False,0
+merged_analytics_mspr_20.csv,Very_Active_Distance,float64,940,0,0.0,333,False,43.94,False,0
+merged_analytics_mspr_20.csv,Moderately_Active_Distance,float64,940,0,0.0,211,False,41.06,False,0
+merged_analytics_mspr_20.csv,Light_Active_Distance,float64,940,0,0.0,491,False,9.04,False,0
+merged_analytics_mspr_20.csv,Very_Active_Minutes,int64,940,0,0.0,122,False,43.51,False,0
+merged_analytics_mspr_20.csv,Fairly_Active_Minutes,int64,940,0,0.0,81,False,40.85,False,0
+merged_analytics_mspr_20.csv,Lightly_Active_Minutes,int64,940,0,0.0,335,False,8.94,False,0
+merged_analytics_mspr_20.csv,Sedentary_Minutes,int64,940,0,0.0,549,False,0.11,False,0
+merged_analytics_mspr_20.csv,Session_Duration (hours),float64,940,0,0.0,30,False,0.0,False,0
+merged_analytics_mspr_20.csv,Calories_Burned,int64,940,0,0.0,734,False,0.43,False,0
+nutrition_clean.csv,Food_Item,object,591,0,0.0,587,False,,False,0
+nutrition_clean.csv,Category,object,591,0,0.0,46,False,,False,0
+nutrition_clean.csv,Calories (kcal),int64,591,0,0.0,139,False,1.02,False,0
+nutrition_clean.csv,Protein (g),float64,591,0,0.0,72,False,11.34,False,0
+nutrition_clean.csv,Carbohydrates (g),float64,591,0,0.0,118,False,8.46,False,0
+nutrition_clean.csv,Fat (g),float64,591,0,0.0,73,False,19.97,False,0
+nutrition_clean.csv,Fiber (g),float64,591,0,0.0,49,False,28.6,False,0
+nutrition_clean.csv,Sugars (g),float64,591,0,0.0,78,False,17.43,False,0
+nutrition_clean.csv,Sodium (mg),int64,591,0,0.0,110,False,9.98,False,0
+nutrition_clean.csv,Cholesterol (mg),int64,591,0,0.0,55,False,59.39,False,0
+nutrition_clean.csv,Meal_Type,object,591,0,0.0,5,False,,False,0
+nutrition_clean.csv,Water_Intake (ml),int64,591,0,0.0,13,False,77.66,True,0
+nutrition_clean.csv,nutrition_id,int64,591,0,0.0,591,False,0.0,False,0
+users_clean.csv,Age,int64,973,0,0.0,42,False,0.0,False,0
+users_clean.csv,Gender,object,973,0,0.0,2,False,,False,0
+users_clean.csv,Weight (kg),float64,973,0,0.0,532,False,0.0,False,0
+users_clean.csv,Height (m),float64,973,0,0.0,51,False,0.0,False,0
+users_clean.csv,Max_BPM,int64,973,0,0.0,40,False,0.0,False,0
+users_clean.csv,Avg_BPM,int64,973,0,0.0,50,False,0.0,False,0
+users_clean.csv,Resting_BPM,int64,973,0,0.0,25,False,0.0,False,0
+users_clean.csv,Session_Duration (hours),float64,973,0,0.0,147,False,0.0,False,0
+users_clean.csv,Calories_Burned,float64,973,0,0.0,621,False,0.0,False,0
+users_clean.csv,Workout_Type,object,973,0,0.0,4,False,,False,0
+users_clean.csv,Fat_Percentage,float64,973,0,0.0,239,False,0.0,False,0
+users_clean.csv,Water_Intake (liters),float64,973,0,0.0,23,False,0.0,False,0
+users_clean.csv,Workout_Frequency (days/week),int64,973,0,0.0,4,False,0.0,False,0
+users_clean.csv,Experience_Level,int64,973,0,0.0,3,False,0.0,False,0
+users_clean.csv,BMI,float64,973,0,0.0,771,False,0.0,False,0
+users_clean.csv,UserID,int64,973,0,0.0,973,False,0.0,False,0
+users_clean.csv,BMI_calculated,float64,973,0,0.0,771,False,0.0,False,0
+users_for_merge.csv,Age,int64,33,0,0.0,24,False,0.0,False,0
+users_for_merge.csv,Gender,object,33,0,0.0,2,False,,False,0
+users_for_merge.csv,Weight (kg),float64,33,0,0.0,33,False,0.0,False,0
+users_for_merge.csv,Height (m),float64,33,0,0.0,21,False,0.0,False,0
+users_for_merge.csv,Max_BPM,int64,33,0,0.0,23,False,0.0,False,0
+users_for_merge.csv,Avg_BPM,int64,33,0,0.0,24,False,0.0,False,0
+users_for_merge.csv,Resting_BPM,int64,33,0,0.0,19,False,0.0,False,0
+users_for_merge.csv,Session_Duration (hours),float64,33,0,0.0,30,False,0.0,False,0
+users_for_merge.csv,Calories_Burned,float64,33,0,0.0,33,False,0.0,False,0
+users_for_merge.csv,Workout_Type,object,33,0,0.0,4,False,,False,0
+users_for_merge.csv,Fat_Percentage,float64,33,0,0.0,30,False,0.0,False,0
+users_for_merge.csv,Water_Intake (liters),float64,33,0,0.0,14,False,0.0,False,0
+users_for_merge.csv,Workout_Frequency (days/week),int64,33,0,0.0,4,False,0.0,False,0
+users_for_merge.csv,Experience_Level,int64,33,0,0.0,3,False,0.0,False,0
+users_for_merge.csv,BMI,float64,33,0,0.0,33,False,0.0,False,0
+users_for_merge.csv,UserID,int64,33,0,0.0,33,False,0.0,False,0
+users_for_merge.csv,BMI_calculated,float64,33,0,0.0,33,False,0.0,False,0
