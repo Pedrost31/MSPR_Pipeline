@@ -14,6 +14,12 @@ activity_clean.csv,Lightly_Active_Minutes,int64,940,0,0.0,335,False,8.94,False,0
 activity_clean.csv,Sedentary_Minutes,int64,940,0,0.0,549,False,0.11,False,0
 activity_clean.csv,Steps,int64,940,0,0.0,842,False,8.19,False,0
 activity_clean.csv,Calories_Burned,int64,940,0,0.0,734,False,0.43,False,0
+consommation_alimentaire.csv,id_consumption,int64,2856,0,0.0,2856,False,0.0,False,0
+consommation_alimentaire.csv,user_id,int64,2856,0,0.0,33,False,0.0,False,0
+consommation_alimentaire.csv,nutrition_id,int64,2856,0,0.0,586,False,0.0,False,0
+consommation_alimentaire.csv,date_consommation,object,2856,0,0.0,31,False,,False,0
+consommation_alimentaire.csv,repas_type,object,2856,0,0.0,4,False,,False,0
+consommation_alimentaire.csv,quantite_grammes,float64,2856,0,0.0,2720,False,0.0,False,0
 merged_analytics_mspr_20.csv,UserID,int64,940,0,0.0,33,False,0.0,False,0
 merged_analytics_mspr_20.csv,Date,object,940,0,0.0,31,False,,False,0
 merged_analytics_mspr_20.csv,Workout_Type,object,940,0,0.0,4,False,,False,0
