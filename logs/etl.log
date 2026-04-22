@@ -65,3 +65,21 @@
 2026-04-22 00:05:04,108 | INFO | etl.load | Donnees sauvegardees dans data/processed/
 2026-04-22 00:05:04,250 | INFO | etl.quality | CSV quality check done | files=5 columns=82 flagged=3 report=logs\csv_quality_report.csv
 2026-04-22 00:05:04,251 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-22 09:35:43,697 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-22 09:35:43,809 | INFO | etl.extract | Extraction reussie
+2026-04-22 09:35:43,928 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 merged=940
+2026-04-22 09:35:44,049 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-22 09:35:44,438 | INFO | etl.quality | CSV quality check done | files=5 columns=82 flagged=3 report=logs\csv_quality_report.csv
+2026-04-22 09:35:44,441 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-22 09:35:47,383 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-22 09:35:47,420 | INFO | etl.extract | Extraction reussie
+2026-04-22 09:35:47,555 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 merged=940
+2026-04-22 09:35:47,630 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-22 09:35:47,836 | INFO | etl.quality | CSV quality check done | files=5 columns=82 flagged=3 report=logs\csv_quality_report.csv
+2026-04-22 09:35:47,837 | INFO | etl.pipeline | Pipeline ETL termine avec succes
+2026-04-22 22:25:28,322 | INFO | etl.pipeline | Demarrage du pipeline ETL
+2026-04-22 22:25:28,336 | INFO | etl.extract | Extraction reussie
+2026-04-22 22:25:28,464 | INFO | etl.transform | Transformation OK | users=973 activity=940 nutrition=591 merged=940 consommation=2856
+2026-04-22 22:25:28,501 | INFO | etl.load | Donnees sauvegardees dans data/processed/
+2026-04-22 22:25:28,651 | INFO | etl.quality | CSV quality check done | files=6 columns=88 flagged=3 report=logs\csv_quality_report.csv
+2026-04-22 22:25:28,651 | INFO | etl.pipeline | Pipeline ETL termine avec succes

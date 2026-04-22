@@ -16,5 +16,8 @@ def load_data(data):
     data["merged_mspr_20"].to_csv(
         os.path.join(OUTPUT_PATH, "merged_analytics_mspr_20.csv"), index=False
     )
+    data["consommation_alimentaire"].to_csv(
+        os.path.join(OUTPUT_PATH, "consommation_alimentaire.csv"), index=False
+    )
 
     logger.info("Donnees sauvegardees dans %s", OUTPUT_PATH)

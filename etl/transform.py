@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from .utils import get_logger, validate_required_columns
 
 logger = get_logger(__name__)
@@ -181,6 +182,46 @@ def _select_mspr_20_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df[existing].copy()
 
 
+def build_consumption_data(
+    merged_mspr_20: pd.DataFrame, nutrition: pd.DataFrame, seed: int = 42
+) -> pd.DataFrame:
+    """
+    Build a simulated food consumption table to link users with nutrition.
+    """
+    validate_required_columns(merged_mspr_20, ["UserID", "Date"], "merged_mspr_20")
+    validate_required_columns(nutrition, ["nutrition_id"], "nutrition")
+
+    rng = np.random.default_rng(seed)
+    nutrition_ids = nutrition["nutrition_id"].dropna().astype(int).tolist()
+    if not nutrition_ids:
+        raise ValueError("Aucun nutrition_id disponible pour simuler les consommations")
+
+    meal_types = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"]
+    records = []
+    id_consumption = 1
+
+    for row in merged_mspr_20.itertuples(index=False):
+        n_items = int(rng.integers(2, 5))  # 2 to 4 food items per day/user
+        selected_ids = rng.choice(nutrition_ids, size=n_items, replace=False)
+        selected_meals = rng.choice(meal_types, size=n_items, replace=True)
+        quantities = rng.uniform(80, 350, size=n_items)
+
+        for nutrition_id, meal, qty in zip(selected_ids, selected_meals, quantities):
+            records.append(
+                {
+                    "id_consumption": id_consumption,
+                    "user_id": int(row.UserID),
+                    "nutrition_id": int(nutrition_id),
+                    "date_consommation": pd.to_datetime(row.Date).date(),
+                    "repas_type": str(meal),
+                    "quantite_grammes": round(float(qty), 2),
+                }
+            )
+            id_consumption += 1
+
+    return pd.DataFrame(records)
+
+
 # -----------------------------
 # MAIN TRANSFORM FUNCTION
 # -----------------------------
@@ -208,13 +249,15 @@ def transform_data(data: dict) -> dict:
     nutrition = _standardize_frame(nutrition)
     merged = _standardize_frame(merged)
     merged_mspr_20 = _select_mspr_20_columns(merged)
+    consommation_alimentaire = build_consumption_data(merged_mspr_20, nutrition)
 
     logger.info(
-        "Transformation OK | users=%s activity=%s nutrition=%s merged=%s",
+        "Transformation OK | users=%s activity=%s nutrition=%s merged=%s consommation=%s",
         len(users),
         len(activity),
         len(nutrition),
         len(merged),
+        len(consommation_alimentaire),
     )
 
     return {
@@ -223,4 +266,5 @@ def transform_data(data: dict) -> dict:
         "activity": activity,
         "nutrition": nutrition,
         "merged_mspr_20": merged_mspr_20,
+        "consommation_alimentaire": consommation_alimentaire,
     }
