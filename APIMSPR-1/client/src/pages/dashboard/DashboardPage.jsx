@@ -5,6 +5,8 @@ import {
   IconHome, IconActivity, IconBowl,
   IconFood, IconTrend, IconEmpty,
 } from '../../components/Icons'
+import { usePagination, PAGE_SIZE } from '../../hooks/usePagination'
+import Pagination from '../../components/Pagination'
 
 const SECTIONS = [
   { id: 'home',      label: 'Accueil',      icon: <IconHome size={16}/>,     group: 'Mon espace' },
@@ -19,6 +21,7 @@ const COUNTS = ['activite', 'conso', 'aliment']
 function DataTable({ section }) {
   const [data, setData]         = useState([])
   const [filtered, setFiltered] = useState([])
+  const { paginated, page, setPage, pageCount, total } = usePagination(filtered)
 
   useEffect(() => {
     api('GET', section.endpoint).then(d => { setData(d); setFiltered(d) }).catch(() => {})
@@ -48,12 +51,13 @@ function DataTable({ section }) {
                 </td>
               </tr>
             ) : (
-              filtered.map((r, i) => (
+              paginated.map((r, i) => (
                 <tr key={i}>{cols.map(c => <td key={c}>{r[c] ?? '—'}</td>)}</tr>
               ))
             )}
           </tbody>
         </table>
+        <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} setPage={setPage} />
       </div>
     </>
   )

@@ -3,6 +3,8 @@ import { api } from '../../../api'
 import { useToast } from '../../../context/ToastContext'
 import Modal from '../../../components/Modal'
 import { IconEmpty } from '../../../components/Icons'
+import { usePagination, PAGE_SIZE } from '../../../hooks/usePagination'
+import Pagination from '../../../components/Pagination'
 
 export default function ProfilsSection() {
   const toast = useToast()
@@ -54,6 +56,8 @@ export default function ProfilsSection() {
   // Comptes déjà utilisés (pour les griser dans le select)
   const usedAccountIds = new Set(profils.map(p => p.api_user_id).filter(Boolean))
 
+  const { paginated, page, setPage, pageCount, total } = usePagination(filtered)
+
   const linked   = filtered.filter(p => p.api_user_id)
   const unlinked = filtered.filter(p => !p.api_user_id)
 
@@ -85,7 +89,7 @@ export default function ProfilsSection() {
           <tbody>
             {filtered.length === 0 ? (
               <tr><td colSpan={8} className="empty"><div className="empty-icon"><IconEmpty size={40}/></div>Aucun profil</td></tr>
-            ) : filtered.map(p => (
+            ) : paginated.map(p => (
               <tr key={p.user_id}>
                 <td><code>{p.user_id}</code></td>
                 <td>{p.age ?? '—'}</td>
@@ -112,6 +116,7 @@ export default function ProfilsSection() {
             ))}
           </tbody>
         </table>
+        <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} setPage={setPage} />
       </div>
 
       {/* Modal — attribuer un compte */}

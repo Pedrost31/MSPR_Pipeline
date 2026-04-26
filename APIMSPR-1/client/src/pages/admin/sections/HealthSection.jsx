@@ -3,12 +3,15 @@ import { api } from '../../../api'
 import { useToast } from '../../../context/ToastContext'
 import Modal from '../../../components/Modal'
 import { IconEmpty } from '../../../components/Icons'
+import { usePagination, PAGE_SIZE } from '../../../hooks/usePagination'
+import Pagination from '../../../components/Pagination'
 
 export default function HealthSection({ config }) {
   const toast = useToast()
   const [data, setData]         = useState([])
   const [filtered, setFiltered] = useState([])
   const [delTarget, setDel]     = useState(null)
+  const { paginated, page, setPage, pageCount, total } = usePagination(filtered)
 
   const load = () => api('GET', config.endpoint).then(d => { setData(d); setFiltered(d) }).catch(e => toast(e.message, 'err'))
   useEffect(() => { load() }, [config.endpoint])
@@ -38,7 +41,7 @@ export default function HealthSection({ config }) {
           <tbody>
             {filtered.length === 0
               ? <tr><td colSpan={cols.length + 1} className="empty"><div className="empty-icon"><IconEmpty size={40}/></div>Aucune donnée</td></tr>
-              : filtered.map((row, i) => (
+              : paginated.map((row, i) => (
                 <tr key={i}>
                   {cols.map(c => <td key={c}>{row[c] ?? '—'}</td>)}
                   <td><button className="btn-sm btn-del" onClick={() => setDel(row)}>Suppr.</button></td>
@@ -47,6 +50,7 @@ export default function HealthSection({ config }) {
             }
           </tbody>
         </table>
+        <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} setPage={setPage} />
       </div>
 
       {delTarget && (

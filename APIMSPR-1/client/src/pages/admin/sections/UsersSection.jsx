@@ -3,12 +3,15 @@ import { api } from '../../../api'
 import { useAuth } from '../../../context/AuthContext'
 import { useToast } from '../../../context/ToastContext'
 import Modal from '../../../components/Modal'
+import { usePagination, PAGE_SIZE } from '../../../hooks/usePagination'
+import Pagination from '../../../components/Pagination'
 
 export default function UsersSection() {
   const { user: me }         = useAuth()
   const toast                = useToast()
   const [users, setUsers]    = useState([])
   const [filtered, setFiltered] = useState([])
+  const { paginated, page, setPage, pageCount, total } = usePagination(filtered)
   const [editId, setEditId]  = useState(null)
   const [delTarget, setDel]  = useState(null)
   const [form, setForm]      = useState({ email: '', password: '', role: 'user' })
@@ -63,7 +66,7 @@ export default function UsersSection() {
           <tbody>
             {filtered.length === 0 ? (
               <tr><td colSpan={5} className="empty">Aucun compte</td></tr>
-            ) : filtered.map(u => (
+            ) : paginated.map(u => (
               <tr key={u.id}>
                 <td>{u.id}</td>
                 <td>{u.email}{u.id === me.id && <span className="me-tag">moi</span>}</td>
@@ -82,6 +85,7 @@ export default function UsersSection() {
             ))}
           </tbody>
         </table>
+        <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} setPage={setPage} />
       </div>
 
       {showForm && (

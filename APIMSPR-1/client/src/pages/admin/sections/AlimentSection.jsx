@@ -3,6 +3,8 @@ import { api } from '../../../api'
 import { useToast } from '../../../context/ToastContext'
 import Modal from '../../../components/Modal'
 import { IconEmpty } from '../../../components/Icons'
+import { usePagination, PAGE_SIZE } from '../../../hooks/usePagination'
+import Pagination from '../../../components/Pagination'
 
 const empty = {
   food_item: '', category: '', calories_kcal: '', protein_g: '',
@@ -13,6 +15,7 @@ export default function AlimentSection() {
   const toast = useToast()
   const [data, setData]         = useState([])
   const [filtered, setFiltered] = useState([])
+  const { paginated, page, setPage, pageCount, total } = usePagination(filtered)
   const [editName, setEditName] = useState(null)
   const [form, setForm]         = useState(empty)
   const [showForm, setShow]     = useState(false)
@@ -91,7 +94,7 @@ export default function AlimentSection() {
                 </td>
               </tr>
             ) : (
-              filtered.map(r => (
+              paginated.map(r => (
                 <tr key={r.food_item}>
                   <td>{r.food_item}</td>
                   <td>{r.category || '—'}</td>
@@ -111,6 +114,7 @@ export default function AlimentSection() {
             )}
           </tbody>
         </table>
+        <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} setPage={setPage} />
       </div>
 
       {showForm && (
