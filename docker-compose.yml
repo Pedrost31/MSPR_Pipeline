@@ -1,0 +1,97 @@
+version: "3.9"
+
+# HealthAI Coach — Stack complète
+# Services : postgres | pipeline (ETL) | seed (chargement CSV) | api (Node.js + React)
+#
+# Démarrage complet :
+#   docker compose up --build
+#
+# Démarrage API seule (base déjà peuplée) :
+#   docker compose up postgres api
+
+services:
+
+  # ── 1. Base de données PostgreSQL ───────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: healthai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       healthai
+      POSTGRES_USER:     healthai
+      POSTGRES_PASSWORD: healthai
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./MSPR_Pipeline/database/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - ./MSPR_Pipeline/database/api_schema.sql:/docker-entrypoint-initdb.d/02_api_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healthai -d healthai"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  # ── 2. Pipeline ETL — génère les CSV propres ─────────────────────────────
+  pipeline:
+    build:
+      context: ./MSPR_Pipeline
+      dockerfile: Dockerfile
+    container_name: healthai-pipeline
+    volumes:
+      - ./MSPR_Pipeline/data:/app/data
+      - ./MSPR_Pipeline/logs:/app/logs
+    environment:
+      PYTHONPATH: /app
+    command: python scripts/run_pipeline.py
+    # Ce service se termine dès que le pipeline est terminé (exit 0)
+
+  # ── 3. Seed — charge les CSV dans PostgreSQL ─────────────────────────────
+  seed:
+    build:
+      context: ./MSPR_Pipeline
+      dockerfile: Dockerfile
+    container_name: healthai-seed
+    depends_on:
+      postgres:
+        condition: service_healthy
+      pipeline:
+        condition: service_completed_successfully
+    volumes:
+      - ./MSPR_Pipeline/data:/app/data
+    environment:
+      PYTHONPATH:        /app
+      POSTGRES_HOST:     postgres
+      POSTGRES_PORT:     "5432"
+      POSTGRES_DB:       healthai
+      POSTGRES_USER:     healthai
+      POSTGRES_PASSWORD: healthai
+    command: python database/seed.py --truncate
+    # Ce service se termine dès que le seed est terminé (exit 0)
+
+  # ── 4. API Node.js + Frontend React ─────────────────────────────────────
+  api:
+    build:
+      context: ./APIMSPR-1
+      dockerfile: Dockerfile
+    container_name: healthai-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      PORT:         3000
+      NODE_ENV:     production
+      DATABASE_URL: postgresql://healthai:healthai@postgres:5432/healthai
+      JWT_SECRET:   ${JWT_SECRET:-change_me_in_production_use_a_long_random_string}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: healthai_postgres_data
