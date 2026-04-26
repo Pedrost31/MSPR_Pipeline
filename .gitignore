@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+*.egg
+
+# Node
+node_modules/
+APIMSPR-1/public/dist/
+
+# Données brutes et sensibles
+MSPR_Pipeline/data/raw/
+MSPR_Pipeline/data/processed/
+MSPR_Pipeline/logs/
+
+# Variables d'environnement
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
