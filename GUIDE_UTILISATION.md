@@ -2,7 +2,11 @@
 
 **Projet MSPR** — Stack : Python ETL · PostgreSQL · Node.js/Express · React 18  
 **Auteur :** Hajar El-Gassir  
-**Date :** Avril 2026
+**Date :** Avril 2026  
+**Shell :** PowerShell 7+ (pwsh)
+
+> **Important :** Tous les chemins contenant des espaces doivent être entre guillemets doubles.  
+> Exemple : `cd "C:\Users\...\MSPR pipeline\APIMSPR-1"`
 
 ---
 
@@ -60,21 +64,21 @@
 
 ### 3.1 Cloner et configurer
 
-```bash
+```powershell
 # Cloner le dépôt
 git clone <url-du-repo>
 cd "MSPR pipeline"
 
-# (Optionnel) Personnaliser le secret JWT
-export JWT_SECRET="votre_secret_tres_long_et_aleatoire"
+# (Optionnel) Personnaliser le secret JWT pour cette session
+$env:JWT_SECRET = "votre_secret_tres_long_et_aleatoire"
 ```
 
 ### 3.2 Construire le frontend React
 
 Le build React doit être effectué **avant** de lancer Docker (Express sert les fichiers statiques) :
 
-```bash
-cd APIMSPR-1
+```powershell
+cd "APIMSPR-1"
 npm install
 npm run build      # génère APIMSPR-1/public/dist/
 cd ..
@@ -82,13 +86,13 @@ cd ..
 
 ### 3.3 Lancer la stack complète
 
-```bash
+```powershell
 docker compose up --build
 ```
 
 **Ordre d'exécution automatique :**
 1. `postgres` démarre et initialise le schéma SQL
-2. `pipeline` exécute l'ETL et génère les CSV dans `MSPR_Pipeline/data/processed/`
+2. `pipeline` exécute l'ETL et génère les CSV dans `MSPR_Pipeline\data\processed\`
 3. `seed` charge les CSV dans PostgreSQL (attend la fin du pipeline)
 4. `api` démarre l'API Node.js (attend que PostgreSQL soit prêt)
 
@@ -98,13 +102,13 @@ docker compose up --build
 
 Si les données sont déjà chargées, lancer uniquement l'API :
 
-```bash
+```powershell
 docker compose up postgres api
 ```
 
 ### 3.5 Arrêter la stack
 
-```bash
+```powershell
 docker compose down          # Arrêter sans supprimer les données
 docker compose down -v       # Arrêter ET supprimer les volumes (reset complet)
 ```
@@ -114,6 +118,8 @@ docker compose down -v       # Arrêter ET supprimer les volumes (reset complet)
 ## 4. Installation manuelle (sans Docker)
 
 ### 4.1 Base de données PostgreSQL
+
+Se connecter à psql et exécuter :
 
 ```sql
 -- Créer la base et le schéma
@@ -126,44 +132,53 @@ CREATE SCHEMA healthai;
 \i MSPR_Pipeline/database/api_schema.sql
 ```
 
+Depuis PowerShell (psql doit être dans le PATH) :
+
+```powershell
+psql -U postgres -c "CREATE DATABASE healthai;"
+psql -U postgres -d healthai -f "MSPR_Pipeline\database\init.sql"
+psql -U postgres -d healthai -f "MSPR_Pipeline\database\api_schema.sql"
+```
+
 ### 4.2 Pipeline ETL
 
-```bash
-cd MSPR_Pipeline
+```powershell
+cd "MSPR_Pipeline"
 
 # Créer un environnement virtuel
 python -m venv venv
-source venv/bin/activate       # Linux/Mac
-# ou : venv\Scripts\activate   # Windows
+
+# Activer l'environnement virtuel
+.\venv\Scripts\Activate.ps1
+
+# Si l'exécution de scripts est bloquée, lancer d'abord :
+# Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 # Installer les dépendances
 pip install -r requirements.txt
 
-# Lancer le pipeline (génère les CSV dans data/processed/)
-python scripts/run_pipeline.py
+# Lancer le pipeline (génère les CSV dans data\processed\)
+python scripts\run_pipeline.py
 
 # Charger les CSV dans PostgreSQL
-POSTGRES_HOST=localhost \
-POSTGRES_PORT=5432 \
-POSTGRES_DB=healthai \
-POSTGRES_USER=healthai \
-POSTGRES_PASSWORD=healthai \
-python database/seed.py --truncate
+$env:POSTGRES_HOST     = "localhost"
+$env:POSTGRES_PORT     = "5432"
+$env:POSTGRES_DB       = "healthai"
+$env:POSTGRES_USER     = "healthai"
+$env:POSTGRES_PASSWORD = "healthai"
+python database\seed.py --truncate
 ```
 
 ### 4.3 API Node.js
 
-```bash
-cd APIMSPR-1
+```powershell
+cd "APIMSPR-1"
 
 # Installer les dépendances
 npm install
-
-# Configurer les variables d'environnement
-cp .env.example .env    # ou éditer .env directement
 ```
 
-Contenu du fichier `.env` :
+Créer ou éditer le fichier `.env` :
 
 ```env
 PORT=3000
@@ -172,19 +187,19 @@ JWT_SECRET=votre_secret_jwt_long_et_aleatoire
 NODE_ENV=development
 ```
 
-```bash
+```powershell
 # Lancer l'API en développement (rechargement automatique)
 npm run dev
 
-# Lancer le frontend en développement (port 5173)
+# Lancer le frontend en développement (port 5173) — dans un second terminal
 npm run dev:client
 ```
 
 ### 4.4 Build production du frontend
 
-```bash
-cd APIMSPR-1
-npm run build      # Génère public/dist/ — servi par Express sur le port 3000
+```powershell
+cd "APIMSPR-1"
+npm run build      # Génère public\dist\ — servi par Express sur le port 3000
 ```
 
 ---
@@ -193,52 +208,51 @@ npm run build      # Génère public/dist/ — servi par Express sur le port 300
 
 ### 5.1 Créer le premier compte administrateur
 
-Via SQL (à faire une seule fois après le démarrage) :
-
-```bash
-# Se connecter à PostgreSQL (Docker)
-docker exec -it healthai-postgres psql -U healthai -d healthai
-
-# Créer un admin (le mot de passe sera haché via l'API, ici on s'inscrit d'abord)
-```
-
 **Étape 1 — S'inscrire via l'API :**
 
-```bash
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@healthai.fr", "password": "MonMotDePasse123!"}'
+```powershell
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/auth/register" `
+  -ContentType "application/json" `
+  -Body '{"email": "admin@healthai.fr", "password": "MonMotDePasse123!"}'
 ```
 
 **Étape 2 — Promouvoir en admin via SQL :**
 
-```sql
-UPDATE healthai.api_users
-SET role = 'admin'
-WHERE email = 'admin@healthai.fr';
+```powershell
+# Docker
+docker exec -it healthai-postgres psql -U healthai -d healthai `
+  -c "UPDATE healthai.api_users SET role = 'admin' WHERE email = 'admin@healthai.fr';"
+
+# Local (psql dans le PATH)
+psql -U healthai -d healthai `
+  -c "UPDATE healthai.api_users SET role = 'admin' WHERE email = 'admin@healthai.fr';"
 ```
 
 ### 5.2 Se connecter
 
 **Via l'interface web :** Ouvrir [http://localhost:3000](http://localhost:3000) et renseigner email + mot de passe.
 
-**Via l'API :**
+**Via PowerShell (avec gestion de session pour les cookies) :**
 
-```bash
-curl -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -c cookies.txt \
-  -d '{"email": "admin@healthai.fr", "password": "MonMotDePasse123!"}'
+```powershell
+# Créer une session pour conserver le cookie JWT
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+
+# Se connecter
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/auth/login" `
+  -ContentType "application/json" `
+  -WebSession $session `
+  -Body '{"email": "admin@healthai.fr", "password": "MonMotDePasse123!"}'
 ```
 
 Réponse :
 ```json
-{
-  "role": "admin",
-  "email": "admin@healthai.fr",
-  "id": 1
-}
+{ "role": "admin", "email": "admin@healthai.fr", "id": 1 }
 ```
+
+> La variable `$session` contient le cookie JWT. Réutilisez-la pour toutes les requêtes suivantes.
 
 ### 5.3 Rôles et permissions
 
@@ -315,14 +329,6 @@ Accessible sur `/dashboard` après connexion avec un compte `user` **auquel un p
 > **Important :** Un compte sans profil lié verra des données vides.  
 > Demander à l'administrateur de lier votre profil via la section Profils.
 
-### 7.1 Tableau de bord personnel
-
-Affiche les données filtrées sur votre profil :
-- Historique des activités
-- Journaux alimentaires
-- Résumé nutritionnel
-- Bilan calorique
-
 ---
 
 ## 8. API REST — Utilisation directe
@@ -330,89 +336,107 @@ Affiche les données filtrées sur votre profil :
 Base URL : `http://localhost:3000`  
 Authentification : Cookie `token` (httpOnly) ou header `Authorization: Bearer <jwt>`
 
+> **Rappel :** Créer `$session` une seule fois après le login, puis passer `-WebSession $session` à chaque requête.
+
 ### 8.1 Authentification
 
-```bash
-# Inscription
-curl -X POST /auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com", "password": "password123"}'
+```powershell
+# Créer la session (une seule fois)
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 
-# Connexion (retourne un cookie JWT)
-curl -X POST /auth/login \
-  -H "Content-Type: application/json" \
-  -c cookies.txt \
-  -d '{"email": "user@example.com", "password": "password123"}'
+# Inscription
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/auth/register" `
+  -ContentType "application/json" `
+  -Body '{"email": "user@example.com", "password": "password123"}'
+
+# Connexion
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/auth/login" `
+  -ContentType "application/json" `
+  -WebSession $session `
+  -Body '{"email": "user@example.com", "password": "password123"}'
 
 # Vérifier sa session
-curl -X GET /auth/me -b cookies.txt
+Invoke-RestMethod -Uri "http://localhost:3000/auth/me" -WebSession $session
 
 # Déconnexion
-curl -X POST /auth/logout -b cookies.txt
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/auth/logout" `
+  -WebSession $session
 ```
 
 ### 8.2 Activités physiques
 
-```bash
-# Lister les activités (filtré sur votre profil si user)
-curl -X GET /activite_quotidienne -b cookies.txt
+```powershell
+# Lister les activités
+Invoke-RestMethod -Uri "http://localhost:3000/activite_quotidienne" `
+  -WebSession $session
 
 # Créer une activité (admin)
-curl -X POST /activite_quotidienne \
-  -H "Content-Type: application/json" \
-  -b cookies.txt \
-  -d '{
-    "user_id": 1503960366,
-    "date": "2026-04-26",
-    "workout_type": "Running",
-    "steps": 10500,
-    "total_distance": 8.5,
-    "session_duration_hours": 1.25,
-    "calories_burned": 650,
-    "very_active_distance": 8.5,
-    "very_active_minutes": 45,
-    "fairly_active_minutes": 20,
-    "lightly_active_minutes": 10,
-    "sedentary_minutes": 10
-  }'
+$body = @{
+  user_id                = 1503960366
+  date                   = "2026-04-26"
+  workout_type           = "Running"
+  steps                  = 10500
+  total_distance         = 8.5
+  session_duration_hours = 1.25
+  calories_burned        = 650
+  very_active_distance   = 8.5
+  very_active_minutes    = 45
+  fairly_active_minutes  = 20
+  lightly_active_minutes = 10
+  sedentary_minutes      = 10
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/activite_quotidienne" `
+  -ContentType "application/json" `
+  -WebSession $session `
+  -Body $body
 
 # Supprimer une activité (admin)
-curl -X DELETE /activite_quotidienne/42 -b cookies.txt
+Invoke-RestMethod -Method DELETE `
+  -Uri "http://localhost:3000/activite_quotidienne/42" `
+  -WebSession $session
 ```
 
 ### 8.3 Alimentation
 
-```bash
+```powershell
 # Voir le référentiel alimentaire
-curl -X GET /aliment -b cookies.txt
+Invoke-RestMethod -Uri "http://localhost:3000/aliment" -WebSession $session
 
 # Chercher un aliment
-curl -X GET "/aliment/Apple" -b cookies.txt
+Invoke-RestMethod -Uri "http://localhost:3000/aliment/Apple" -WebSession $session
 
 # Enregistrer une consommation (admin)
-curl -X POST /consommation \
-  -H "Content-Type: application/json" \
-  -b cookies.txt \
-  -d '{
-    "user_id": 1503960366,
-    "nutrition_id": 42,
-    "date_consommation": "2026-04-26",
-    "repas_type": "BREAKFAST",
-    "quantite_grammes": 200
-  }'
+$body = @{
+  user_id           = 1503960366
+  nutrition_id      = 42
+  date_consommation = "2026-04-26"
+  repas_type        = "BREAKFAST"
+  quantite_grammes  = 200
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/consommation" `
+  -ContentType "application/json" `
+  -WebSession $session `
+  -Body $body
 ```
 
 ### 8.4 Analytiques
 
-```bash
+```powershell
 # KPI globaux
-curl -X GET /analytics/kpi -b cookies.txt
+Invoke-RestMethod -Uri "http://localhost:3000/analytics/kpi" -WebSession $session
 
 # Bilan calorique
-curl -X GET /analytics/bilan -b cookies.txt
+Invoke-RestMethod -Uri "http://localhost:3000/analytics/bilan" -WebSession $session
 
 # Résumé journalier
-curl -X GET /analytics/resume -b cookies.txt
+Invoke-RestMethod -Uri "http://localhost:3000/analytics/resume" -WebSession $session
 ```
 
 ---
@@ -421,7 +445,7 @@ curl -X GET /analytics/resume -b cookies.txt
 
 ### 9.1 Structure des données sources
 
-Les 3 datasets CSV originaux sont dans `MSPR_Pipeline/data/raw/` :
+Les 3 datasets CSV originaux sont dans `MSPR_Pipeline\data\raw\` :
 
 | Fichier | Description | Lignes |
 |---|---|:---:|
@@ -431,19 +455,19 @@ Les 3 datasets CSV originaux sont dans `MSPR_Pipeline/data/raw/` :
 
 ### 9.2 Lancer le pipeline manuellement
 
-```bash
-cd MSPR_Pipeline
+```powershell
+cd "MSPR_Pipeline"
 
 # Pipeline complet
-python scripts/run_pipeline.py
+python scripts\run_pipeline.py
 
 # Vérification de la qualité des CSV
-python scripts/check_csv_quality.py
+python scripts\check_csv_quality.py
 ```
 
 ### 9.3 Fichiers générés
 
-Les CSV propres sont écrits dans `MSPR_Pipeline/data/processed/` :
+Les CSV propres sont écrits dans `MSPR_Pipeline\data\processed\` :
 
 | Fichier | Description | Lignes |
 |---|---|:---:|
@@ -456,13 +480,13 @@ Les CSV propres sont écrits dans `MSPR_Pipeline/data/processed/` :
 
 ### 9.4 Rapport de qualité
 
-Le fichier `MSPR_Pipeline/logs/csv_quality_report.csv` contient les métriques de qualité par colonne (% valeurs manquantes, % zéros, unicité, doublons).
+Le fichier `MSPR_Pipeline\logs\csv_quality_report.csv` contient les métriques de qualité par colonne (% valeurs manquantes, % zéros, unicité, doublons).
 
 ---
 
 ## 10. Variables d'environnement
 
-### API (`APIMSPR-1/.env`)
+### API (`APIMSPR-1\.env`)
 
 | Variable | Exemple | Description |
 |---|---|---|
@@ -471,19 +495,15 @@ Le fichier `MSPR_Pipeline/logs/csv_quality_report.csv` contient les métriques d
 | `JWT_SECRET` | `une_longue_chaine_aleatoire` | Secret de signature des tokens JWT |
 | `NODE_ENV` | `development` ou `production` | Environnement d'exécution |
 
-### Docker Compose (racine)
+### Docker Compose — variable JWT_SECRET
 
-| Variable | Défaut | Description |
-|---|---|---|
-| `JWT_SECRET` | `change_me_in_production` | À surcharger en production |
-
-Passer la variable avant de lancer Docker :
-
-```bash
-JWT_SECRET="mon_secret_securise" docker compose up --build
+```powershell
+# Définir la variable pour la session PowerShell courante
+$env:JWT_SECRET = "mon_secret_securise_et_long"
+docker compose up --build
 ```
 
-Ou créer un fichier `.env` à la racine :
+Ou créer un fichier `.env` à la racine du projet :
 
 ```env
 JWT_SECRET=mon_secret_securise_et_long
@@ -506,32 +526,36 @@ Avec Docker : remplacer `localhost` par `postgres` dans `DATABASE_URL`.
 
 ### Le seed échoue — "relation does not exist"
 
-Le schéma n'a pas été initialisé. Vérifier que les scripts SQL ont été exécutés :
+Le schéma n'a pas été initialisé. Vérifier les tables présentes :
 
-```bash
-docker exec -it healthai-postgres psql -U healthai -d healthai \
-  -c "\dt healthai.*"
+```powershell
+docker exec -it healthai-postgres psql -U healthai -d healthai -c "\dt healthai.*"
 ```
 
 ---
 
 ### Connexion refusée — "Session expired or revoked"
 
-Le token JWT est expiré (durée de vie : 24h). Se reconnecter :
+Le token JWT est expiré (durée de vie : 24h). Recréer une session :
 
-```bash
-curl -X POST /auth/login -d '{"email":"...","password":"..."}'
+```powershell
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:3000/auth/login" `
+  -ContentType "application/json" `
+  -WebSession $session `
+  -Body '{"email":"votre@email.com","password":"motdepasse"}'
 ```
 
 ---
 
 ### Accès refusé — 403 "Admin access required"
 
-Vous tentez une opération d'écriture avec un compte `user`. Vérifier votre rôle :
+Vérifier votre rôle :
 
-```bash
-curl -X GET /auth/me -b cookies.txt
-# → { "role": "user" }  ← il faut être "admin" pour écrire
+```powershell
+Invoke-RestMethod -Uri "http://localhost:3000/auth/me" -WebSession $session
+# → role : "user"  ← il faut être "admin" pour écrire
 ```
 
 ---
@@ -542,35 +566,60 @@ Le profil santé n'est pas encore lié à ce compte. Demander à l'admin de lier
 
 ---
 
-### Le pipeline ETL génère des CSV vides
-
-Vérifier que les fichiers sources sont présents dans `MSPR_Pipeline/data/raw/` :
+### Activation du venv bloquée par la politique d'exécution
 
 ```
-gym_members_exercise_tracking.csv
-Activity.csv
-daily_food_nutrition_dataset.csv
+.\venv\Scripts\Activate.ps1 cannot be loaded because running scripts is disabled
+```
+
+**Solution :**
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 
 ---
 
 ### Port 3000 déjà utilisé
 
-```bash
+```powershell
 # Identifier le processus qui utilise le port
-lsof -i :3000        # Linux/Mac
-netstat -ano | findstr :3000   # Windows
+Get-NetTCPConnection -LocalPort 3000 | Select-Object LocalPort, State, OwningProcess
+Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess
 
 # Ou changer le port dans .env
-PORT=3001
+# PORT=3001
+```
+
+---
+
+### Chemin avec espaces — erreur PowerShell
+
+```
+Set-Location: A positional parameter cannot be found that accepts argument '...'
+```
+
+**Solution :** toujours mettre les chemins entre guillemets doubles :
+
+```powershell
+# INCORRECT
+cd C:\Users\elgas\MSPR\MSPR pipeline\APIMSPR-1
+
+# CORRECT
+cd "C:\Users\elgas\MSPR\MSPR pipeline\APIMSPR-1"
 ```
 
 ---
 
 ## Récapitulatif des commandes clés
 
-```bash
-# ── Docker ──────────────────────────────────────────────────────────
+```powershell
+# ── Navigation (chemins avec espaces) ────────────────────────────────
+cd "C:\Users\elgas\OneDrive\Desktop\MSPR\MSPR pipeline"
+cd "C:\Users\elgas\OneDrive\Desktop\MSPR\MSPR pipeline\APIMSPR-1"
+cd "C:\Users\elgas\OneDrive\Desktop\MSPR\MSPR pipeline\MSPR_Pipeline"
+
+# ── Docker ───────────────────────────────────────────────────────────
 docker compose up --build          # Démarrage complet
 docker compose up postgres api     # API seule (données déjà chargées)
 docker compose down                # Arrêt
@@ -578,17 +627,22 @@ docker compose down -v             # Arrêt + suppression des données
 docker compose logs api            # Logs de l'API
 docker compose logs -f             # Tous les logs en temps réel
 
-# ── Build frontend ───────────────────────────────────────────────────
-cd APIMSPR-1 && npm run build
+# ── Build frontend ────────────────────────────────────────────────────
+cd "APIMSPR-1"; npm run build
 
-# ── API en développement ─────────────────────────────────────────────
-cd APIMSPR-1 && npm run dev         # API sur :3000
-cd APIMSPR-1 && npm run dev:client  # Vite sur :5173
+# ── API en développement ──────────────────────────────────────────────
+cd "APIMSPR-1"; npm run dev          # API sur :3000
+cd "APIMSPR-1"; npm run dev:client   # Vite sur :5173
 
-# ── Pipeline ETL ─────────────────────────────────────────────────────
-cd MSPR_Pipeline && python scripts/run_pipeline.py
-cd MSPR_Pipeline && python database/seed.py --truncate
+# ── Pipeline ETL ──────────────────────────────────────────────────────
+cd "MSPR_Pipeline"; python scripts\run_pipeline.py
+cd "MSPR_Pipeline"; python database\seed.py --truncate
 
-# ── Base de données ───────────────────────────────────────────────────
+# ── Base de données (Docker) ──────────────────────────────────────────
 docker exec -it healthai-postgres psql -U healthai -d healthai
+
+# ── Environnement virtuel Python ──────────────────────────────────────
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
