@@ -8,6 +8,7 @@ import consommationRoutes from "./routes/consommation_alimentaire.js";
 import analyticsRoutes from "./routes/analytics.js";
 import { authenticate, authorizeWrite } from "./middleware/auth.js";
 import { attachHealthId } from "./middleware/healthId.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 import cookieParser from "cookie-parser";
 import process from "process";
 import { fileURLToPath } from "url";
@@ -19,6 +20,9 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(join(__dirname, "../public/dist")));
+
+// Healthcheck Docker
+app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
 // Public
 app.use("/auth", authRoutes);
@@ -34,10 +38,13 @@ app.use("/consommation",         authenticate, authorizeWrite, attachHealthId, c
 // Vues analytiques (lecture seule, filtrées par healthId pour les non-admins)
 app.use("/analytics", authenticate, attachHealthId, analyticsRoutes);
 
-// React app fallback
+// React app fallback (doit être avant le errorHandler)
 app.use((_req, res) => {
   res.sendFile(join(__dirname, "../public/dist/index.html"));
 });
+
+// Gestionnaire d'erreurs centralisé (doit être en dernier)
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

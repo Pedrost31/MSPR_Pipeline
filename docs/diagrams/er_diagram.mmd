@@ -1,0 +1,78 @@
+erDiagram
+    API_USERS ||--o{ SESSIONS : "génère"
+    API_USERS |o--o| UTILISATEUR : "est lié à (0..1 — 0..1)"
+    UTILISATEUR ||--o{ ACTIVITE_JOURNALIERE : "réalise (1..N)"
+    ACTIVITE_JOURNALIERE ||--|{ ACTIVITE_INTENSITE : "décomposé en (exactement 4)"
+    UTILISATEUR ||--o{ CONSOMMATION_ALIMENTAIRE : "effectue (0..N)"
+    NUTRITION ||--o{ CONSOMMATION_ALIMENTAIRE : "est consommé dans (0..N)"
+
+    API_USERS {
+        int         id              PK
+        varchar255  email           "UNIQUE NOT NULL"
+        varchar255  password_hash   "NOT NULL — bcrypt"
+        varchar20   role            "user | admin"
+        timestamptz created_at      "DEFAULT now()"
+    }
+
+    SESSIONS {
+        int         id          PK
+        int         user_id     FK
+        text        token       "UNIQUE — JWT"
+        timestamptz expires_at  "24h"
+    }
+
+    UTILISATEUR {
+        bigint      user_id          PK "issu du dataset Kaggle"
+        int         api_user_id      FK "nullable — SET NULL on delete"
+        smallint    age              "CHECK 10..120"
+        varchar20   gender           "Male | Female | Other"
+        smallint    experience_level "1=débutant 2=inter 3=avancé"
+        numeric62   weight_kg        "CHECK > 0"
+        numeric42   height_m         "CHECK > 0"
+        numeric62   bmi_calculated   "poids/taille²"
+        timestamptz created_at
+    }
+
+    ACTIVITE_JOURNALIERE {
+        bigint      id_activity             PK
+        bigint      user_id                 FK
+        date        date
+        varchar50   workout_type
+        int         steps                   "CHECK >= 0"
+        numeric82   total_distance          "km"
+        numeric52   session_duration_hours  "h"
+        int         calories_burned         "CHECK >= 0"
+    }
+
+    ACTIVITE_INTENSITE {
+        bigint  id_intensite      PK
+        bigint  id_activity       FK
+        enum    niveau_intensite  "VERY_ACTIVE | MODERATE | LIGHT | SEDENTARY"
+        numeric distance          "nullable"
+        int     minutes           "CHECK >= 0"
+    }
+
+    NUTRITION {
+        int     nutrition_id     PK
+        varchar food_item
+        varchar category
+        int     calories_kcal    "CHECK >= 0"
+        numeric protein_g
+        numeric carbohydrates_g
+        numeric fat_g
+        numeric fiber_g
+        numeric sugars_g
+        int     sodium_mg
+        int     cholesterol_mg
+        enum    meal_type        "BREAKFAST | LUNCH | DINNER | SNACK"
+        int     water_intake_ml
+    }
+
+    CONSOMMATION_ALIMENTAIRE {
+        bigint  id_consumption    PK
+        bigint  user_id           FK
+        int     nutrition_id      FK
+        date    date_consommation
+        enum    repas_type        "BREAKFAST | LUNCH | DINNER | SNACK"
+        numeric quantite_grammes  "CHECK > 0"
+    }

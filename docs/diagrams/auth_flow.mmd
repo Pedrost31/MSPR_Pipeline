@@ -1,0 +1,56 @@
+sequenceDiagram
+    actor       Client
+    participant API     as API Node.js
+    participant MW      as Middleware (auth.js)
+    participant DB      as PostgreSQL
+
+    rect rgb(230, 244, 255)
+        Note over Client,DB: ── Connexion ──────────────────────────────────
+        Client->>API: POST /auth/login { email, password }
+        API->>DB: SELECT * FROM api_users WHERE email = ?
+        DB-->>API: { id, email, role, password_hash }
+        API->>API: bcrypt.compare(password, hash)
+        API->>API: jwt.sign({ id, email, role }, secret, 24h)
+        API->>DB: INSERT INTO sessions (user_id, token, expires_at)
+        API-->>Client: Set-Cookie: token=JWT (httpOnly, sameSite=strict)<br/>+ { role, email, id }
+    end
+
+    rect rgb(230, 255, 237)
+        Note over Client,DB: ── Requête protégée ──────────────────────────
+        Client->>API: GET /activite_quotidienne (Cookie: token)
+        API->>MW: authenticate
+        MW->>MW: jwt.verify(token, secret)
+        MW->>DB: SELECT id FROM sessions WHERE token=? AND expires_at > NOW()
+        DB-->>MW: session active
+        MW->>MW: req.user = { id, email, role }
+        API->>MW: attachHealthId
+        MW->>DB: SELECT user_id FROM utilisateur WHERE api_user_id = ?
+        DB-->>MW: healthId = 1503960366
+        MW->>MW: req.healthId = 1503960366
+        API->>DB: SELECT * FROM v_intensite_seance WHERE user_id = ? ORDER BY date DESC
+        DB-->>API: [ { activités filtrées } ]
+        API-->>Client: 200 [ { ... } ]
+    end
+
+    rect rgb(255, 243, 230)
+        Note over Client,DB: ── Session expirée ───────────────────────────
+        Client->>API: GET /analytics/kpi (Cookie: ancien token)
+        API->>MW: authenticate
+        MW->>DB: SELECT id FROM sessions WHERE token=? AND expires_at > NOW()
+        DB-->>MW: [] (session expirée)
+        MW-->>Client: 401 { error: "Session expired or revoked." }
+    end
+
+    rect rgb(255, 230, 230)
+        Note over Client,DB: ── Écriture refusée (rôle user) ──────────────
+        Client->>API: POST /activite_quotidienne (rôle user)
+        API->>MW: authenticate → authorizeWrite
+        MW-->>Client: 403 { error: "Admin access required for write operations." }
+    end
+
+    rect rgb(245, 230, 255)
+        Note over Client,DB: ── Déconnexion ───────────────────────────────
+        Client->>API: POST /auth/logout (Cookie: token)
+        API->>DB: DELETE FROM sessions WHERE token = ?
+        API-->>Client: Clear-Cookie + 200 { message: "Logged out." }
+    end

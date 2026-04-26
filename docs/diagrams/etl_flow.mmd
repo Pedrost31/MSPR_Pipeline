@@ -1,0 +1,63 @@
+flowchart TD
+    subgraph RAW["📂 data/raw/ — fichiers Kaggle originaux"]
+        F1["gym_members_exercise_tracking.csv<br/>973 lignes · profils sportifs"]
+        F2["Activity.csv<br/>940 lignes · journaux d'activité"]
+        F3["daily_food_nutrition_dataset.csv<br/>591 lignes · référentiel nutritionnel"]
+    end
+
+    subgraph ETL["⚙️ Pipeline ETL — scripts/run_pipeline.py"]
+        E["extract.py<br/>Lecture des 3 CSV avec pandas"]
+        T["transform.py<br/>Nettoyage · déduplication · calcul IMC<br/>Fusion profils + activités (seed=42)"]
+        L["load.py<br/>Export des CSV propres"]
+        Q["quality.py<br/>Métriques par colonne<br/>(% NULL · % zéros · unicité · doublons)"]
+    end
+
+    subgraph PROCESSED["📂 data/processed/ — CSV propres"]
+        P1["users_clean.csv — 973 lignes"]
+        P2["activity_clean.csv — 940 lignes"]
+        P3["nutrition_clean.csv — 591 lignes"]
+        P4["users_for_merge.csv — 33 lignes"]
+        P5["merged_analytics_mspr_20.csv — 940 lignes"]
+        P6["consommation_alimentaire.csv — 2 856 lignes"]
+    end
+
+    LOGS["📋 logs/csv_quality_report.csv"]
+
+    subgraph SEED["🌱 database/seed.py — Chargement PostgreSQL"]
+        S1["INSERT INTO utilisateur<br/>33 lignes (profils alignés)"]
+        S2["INSERT INTO activite_journaliere<br/>940 lignes"]
+        S3["INSERT INTO activite_intensite<br/>~3 760 lignes (4 par séance)"]
+        S4["INSERT INTO nutrition<br/>591 lignes"]
+        S5["INSERT INTO consommation_alimentaire<br/>2 856 lignes"]
+    end
+
+    subgraph DB["🗄️ PostgreSQL 15 — schéma healthai"]
+        DB1["utilisateur"]
+        DB2["activite_journaliere"]
+        DB3["activite_intensite"]
+        DB4["nutrition"]
+        DB5["consommation_alimentaire"]
+        V["6 vues analytiques<br/>v_profil · v_resume · v_bilan<br/>v_apport · v_intensite · v_kpi"]
+    end
+
+    F1 & F2 & F3 --> E
+    E --> T
+    T --> L
+    T --> Q
+    Q --> LOGS
+
+    L --> P1 & P2 & P3
+    L --> P4 --> P5
+    L --> P6
+
+    P5 --> S1 & S2 & S3
+    P3 --> S4
+    P6 --> S5
+
+    S1 --> DB1
+    S2 --> DB2
+    S3 --> DB3
+    S4 --> DB4
+    S5 --> DB5
+
+    DB1 & DB2 & DB3 & DB4 & DB5 --> V

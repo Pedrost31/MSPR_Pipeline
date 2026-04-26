@@ -1,0 +1,70 @@
+graph TB
+    subgraph Sources["📂 Sources de données (Kaggle)"]
+        CSV1["gym_members_exercise_tracking.csv<br/>(973 lignes)"]
+        CSV2["Activity.csv<br/>(940 lignes)"]
+        CSV3["daily_food_nutrition_dataset.csv<br/>(591 lignes)"]
+    end
+
+    subgraph ETL["⚙️ Pipeline ETL — Python / pandas"]
+        direction TB
+        E["extract.py<br/>Lecture des 3 CSV"]
+        T["transform.py<br/>Nettoyage + calcul IMC + fusion"]
+        L["load.py<br/>Export CSV propres"]
+        Q["quality.py<br/>Rapport qualité"]
+        E --> T --> L
+        T --> Q
+    end
+
+    subgraph DB["🗄️ PostgreSQL 15 — schéma healthai"]
+        direction TB
+        T1["utilisateur (33)"]
+        T2["activite_journaliere (940)"]
+        T3["activite_intensite (~3760)"]
+        T4["nutrition (591)"]
+        T5["consommation_alimentaire (2856)"]
+        V1["6 vues analytiques"]
+    end
+
+    subgraph API["🚀 API REST — Node.js / Express 5"]
+        direction TB
+        MW["Middleware<br/>authenticate · authorizeWrite · attachHealthId"]
+        R1["/auth"]
+        R2["/utilisateurs"]
+        R3["/activite_quotidienne"]
+        R4["/aliment · /consommation"]
+        R5["/analytics"]
+        EH["errorHandler"]
+    end
+
+    subgraph Frontend["🖥️ Frontend — React 18 / Vite"]
+        direction TB
+        EB["ErrorBoundary"]
+        Auth["AuthContext"]
+        Admin["Interface Admin<br/>(CRUD + gestion profils)"]
+        Dashboard["Dashboard Utilisateur<br/>(données filtrées)"]
+    end
+
+    subgraph Docker["🐳 Docker Compose"]
+        D1["postgres:15-alpine"]
+        D2["healthai-pipeline"]
+        D3["healthai-seed"]
+        D4["healthai-api<br/>(multi-stage build)"]
+        D1 -->|healthcheck| D3
+        D2 -->|CSV propres| D3
+        D3 -->|seed| D1
+        D1 -->|DATABASE_URL| D4
+    end
+
+    CSV1 --> E
+    CSV2 --> E
+    CSV3 --> E
+    L --> T1 & T2 & T3 & T4 & T5
+    T1 & T2 & T3 & T4 & T5 --> V1
+    V1 --> R5
+    T1 --> R2
+    T2 --> R3
+    T4 --> R4
+    MW --> R1 & R2 & R3 & R4 & R5
+    R1 & R2 & R3 & R4 & R5 --> EH
+    EH --> EB
+    Auth --> Admin & Dashboard
